@@ -1,18 +1,20 @@
 # Computación II
 
 ## Información personal
-- **Nombre:** [Tu nombre]
-- **Email:** [tu@email.com]
+- **Nombre:** [Franco Quiroga]
+- **Email:** [fe.quiroga@alumno.um.edu.ar]
 - **Carrera:** Ingeniería Informática
 
 ## Expectativas sobre la materia
-- Aprender a gestionar proyectos de software usando Git.
-- Profundizar en conceptos avanzados de programación.
+- Aprender a usar git de manera más eficiente.
+- Profundizar en mis habilidades de programación
+- Mejorar mis conocimientos sobre como funcionan los sistemas operativos y lenguajes de programación
+
 
 ## Intereses relacionados con la programación
-- Desarrollo web.
+- Resolucion de problemas complejos.
 - Inteligencia artificial.
 
 ## Hobbies
-- Tocar la guitarra.
-- Leer ciencia ficción.
+- Me gusta el ciclismo de montaña.
+- Me gustan los videojuegos de exploración.
