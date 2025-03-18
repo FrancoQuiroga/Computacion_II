@@ -8,5 +8,40 @@
 3. ¿Por qué es importante configurar tu nombre y correo electrónico en Git?
 Es importante porque permite que la plataforma remota te reconozca como usuario o dueño de un repositorio remoto
 
-mkdir -p TP_1 TP_2 Clases/Clase_1/Apuntes Clases/Clase_1/Ejercicios Clases/Clase_1/Resumen_pedagogico TRABAJO_FINAL
+Para crear la estructura de directorios desde 0:
+    mkdir -p TP_1 TP_2 Clases/Clase_1/Apuntes Clases/Clase_1/Ejercicios Clases/Clase_1/Resumen_pedagogico TRABAJO_FINAL
+
+Para crear una carpeta para siguientes clases:
+    mkdir -p Clases/Clase_*n*/Apuntes Clases/Clase_*n*/Ejercicios Clases/Clase_*n*/Resumen_pedagogico
+
+¿Por qué es importante mantener una estructura de directorios organizada en un proyecto de software?
+    Porque permite expandir, corregir, y mejorar un proecto de programación de manera más sencilla
+
+¿Qué información debe incluir un archivo README.md?
+    Debe incluir documentación del proyecto (Como utilizar el software, como instalarlo, etc.) y como se puede colaborar con el proyecto
+
+¿Por qué es importante escribir mensajes de commit descriptivos?
+    Porque si en algún momento nuestro código provoca un error catastrófico, podemos hallar con rápidez que version de nuestro programa introdujo este error
+    Además le permite a todos los colaboradores que parte de un proyecto afectó un commit
+
+¿Qué es un repositorio remoto y por qué es útil?
+    Un repositorio remoto son las versiones de algun proyecto, almacenadas en un servidor externo, accedido mediante una conexión a internet
+    Es útil en 3 aspectos: 1-Sirven como un backup del proyecto,2-permite trabajar de manera colaborativa,3-Facilita la automatizacion y el despliegue continuo
+
+¿Qué hace el comando git remote add origin?
+El comando establece un repositorio remoto como la direccion en donde se almacena el repositorio remoto
+
+¿Qué hace el comando git push y por qué es importante?
+El comando git push envía todos los cambios  realizados en los commits al repositorio remoto
+
+¿Qué son stdin, stdout y stderr?
+stdin significa la entrada estándar(por defecto el teclado) de un programa, stdout es la salida estándar(por lo general la pantalla, o una consola de comandos) del programa
+y stderr es la direccion estándar donde un programa escribe sus errores (Por defecto, la pantalla)
+
+¿Cuál es la diferencia entre > y >>?
+    El signo > sobreescribe el archivo de salida/programa, con lo que salga del programa de entrada
+    El signo >> añade a la última línea de texto,del archivo de salida lo que salga del programa de entrada
+
+¿Para qué sirve el archivo especial /dev/null?
+    El archivo especial sirve para descartar todo lo que reciba como archivo de entrada
 
