@@ -1,0 +1,12 @@
+1. ¿Qué es un sistema de control de versiones y por qué es útil?
+    Un sistema de versiones de controles es una herramienta que te permite administrar las versiones de un proyecto de programación
+    Son herramientas útiles para controlar el versionado y para trabajar en equipo, ademas de que proporcionan una manera segura de guardar los archivos de un proyecto
+
+2. ¿En qué se diferencia Git de los sistemas de control de versiones centralizados?
+    Se diferencia en que cada desarrollador tiene una copia completa del repositorio sobre el que se está trabajando, permitiendo trabajar de manera offline, con redundancia, y de forma asincrónica
+
+3. ¿Por qué es importante configurar tu nombre y correo electrónico en Git?
+Es importante porque permite que la plataforma remota te reconozca como usuario o dueño de un repositorio remoto
+
+mkdir -p TP_1 TP_2 Clases/Clase_1/Apuntes Clases/Clase_1/Ejercicios Clases/Clase_1/Resumen_pedagogico TRABAJO_FINAL
+
