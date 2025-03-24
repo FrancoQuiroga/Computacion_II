@@ -1,0 +1,10 @@
+¿En qué caso preferirías getopt sobre argparse?
+    Es preferible en casos donde el script que querramos hacer sea de una complejidad pequeña, y que no necesitaremos
+    ampliar a futuro
+Nombra una ventaja clave de argparse que no tenga getopt:
+    Una ventaja de argparse sobre getopt, es que argparse tiene la capacidad de validar los datos que entran como argumento,
+    además de otorgar ayudas automáticas cuando el usuario comete un error, y la opcion de usar subcomandos
+
+¿Por qué es útil manejar argumentos por línea de comandos en lugar de hardcodear valores en el script?
+    Porque le permite a nuestro script tener una flexibilidad mayor al momento de utilizar dicho script
+

@@ -45,3 +45,8 @@ y stderr es la direccion estándar donde un programa escribe sus errores (Por de
 ¿Para qué sirve el archivo especial /dev/null?
     El archivo especial sirve para descartar todo lo que reciba como archivo de entrada
 
+EJERCICIOS:
+ 
+    Ejercicio 1: ls -l >> listado.txt
+    Ejercicio 2: grep -c '' < listado.txt
+

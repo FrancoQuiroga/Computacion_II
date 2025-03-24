@@ -1,0 +1,5 @@
+total 0
+-rw-rw-r-- 1 franco franco 0 mar 18 15:39 listado.txt
+listado.txt
+total 4
+-rw-rw-r-- 1 franco franco 74 mar 18 15:44 listado.txt
