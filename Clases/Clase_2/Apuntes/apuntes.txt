@@ -1,0 +1,12 @@
+Si cierras abruptamente un proceso padre, ¿qué debería pasar con sus hijos?
+    Depende de las prioridades del sistema, algunos pueden convertirse en 'zombies' otros pueden seguir funcionando con normalidad
+
+¿Cómo identificarías el proceso padre de un proceso dado usando comandos Linux?
+    se puede utilizar ps -f  para saber cual es el padre de todos los procesos
+
+¿Por qué crees que UNIX usa un modelo jerárquico para los procesos?
+    Porque permite proteger el sistema operativo proteger su integridad frente a distintos procesos
+
+
+
+    
