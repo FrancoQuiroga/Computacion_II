@@ -13,6 +13,7 @@ if process1==0:
 if process2==0:
     print(f'Hola soy el hijo 2, me llamo {os.getpid()},mi padre es {os.getppid()}')
     os._exit(0)
+
 else:
     print(f'Hola, soy el padre: {os.getpid()}')
 
