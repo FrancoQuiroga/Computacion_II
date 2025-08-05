@@ -1,0 +1,102 @@
+-----Requisitos Técnicos Globales:
+.Código en python >= 3.9
+	se permiten las librerías: 
+	numpy, hashlib, multiprocessing, queue, os, json, datetime, random.
+
+.Comunicación Principal ---> Analizadores: al menos un Pipe o FIFO por proceso
+
+.Comunicación Analizadores --> Verificador: una multiprocessing.Queue por
+proceso o una cola compartida con tuplas identificadoras
+
+.Sincronización: Lock, Semaphore, Event donde se ocupe
+
+.El programa principal debe terminar limpiamente(Sin zombies ni recursos abiertos)
+
+-----Proceso principal:
+	Generar datos biométricos simulados de una prueba de esfuerzo
+	Simula 60 muestras(1 por segundo) con tres campos distintos:
+	. frecuencia
+	. presion (tupla(sistólica/diastólica))
+	. oxígeno (%)
+	Y un campo adicional que diga el tiempo que se simularon estos datos
+	. timestamp "YYYY-MM-DDTHH:MM:SS"
+	
+	Estos datos se almacenarán en un diccionario de la siguiente manera:
+	{'timestamp': "YYYY-MM-DDTHH:MM:SS",
+	'frecuencia': int(60-180),
+	'presion': (int(110-180),int(70-110)),
+	'oxigeno': int(90-100)
+	}
+
+----Procesos Analizadores:
+. Deben recibir los 60 paquetes
+. Mantener los últimos 30 datos recibidos activamente
+. Calcular en cada iteración:
+	a) La media
+	b) La desviación estándar
+	Ambos calculados dentro de la ventana activa de 30 segundos
+Proceso A:
+	Procesar Frecuencia cardíaca falsa
+Proceso B:
+	Procesar Presión cardíaca falsa
+Proceso C:
+	Procesar Datos oxígenso falsos
+. Luego de ese procesamiento se debe enviar un diccionario al verificador
+. Este diccionario toma la siguiente forma:
+{ 'tipo': 'frecuencia', (O 'presion' / 'oxigeno', dependiendo del dato)
+	'timestamp':....,
+	'media':....,
+	'desv':...
+	}
+
+------Proceso Verificador:
+Verifica la integridad de los datos y genera uno nuevo mediante blockchain
+1- Este proceso debe:
+. Esperar los tres resultados correspondientes al mismo timestamp
+. Comprobar:
+	- frecuencia < 200
+	- 90 <= oxigeno <= 100
+	- presion sistólica(presion[0]) < 200
+. Si algún valor se encuentra fuera del rango anterior, marcar dicho bloque
+con flag: 'alerta': True
+. El bloque generado se verá de la siguiente manera:
+{'timestamp':....,
+
+'datos':{'frecuencia':{'media':...,'desv':...},
+'presion':...,
+'oxigeno':...},
+
+'alerta': bool,
+'prev_hash':'...',
+'hash':'sha256(prev_hash + str(datos) + timestamp)'
+	} AL CERRRAR EL PROGRAMA ACORDARSE DE USAR queue.put('DONE_Q') PARA INDICAR QUE SE TERMINÓ EL PROGRAMA EVITANDO LA INTERRUPCION ABRUPTA DEL HASHING
+2- Además, se debe encadenar en memoria y persistir al archivo blockchain.json al
+finalizar cada segundo (ACORDARSE DE USAR UN LOCK AL  MOMENTO DE ESCRIBIR LOS DATOS; PARA GARANTIZA EXCLUSION MUTUA)
+3- Mostrar por pantalla el índice del bloque, su hash, y si contiene alerta
+
+-------Scripts externos:
+1-verificar_cadena.py:
+	.Tiene que leer blockchain.json
+	.Recalcular hashes y verificar encadenamiento
+	.Informar si hay bloques corruptos
+2-Generar un reporte final(reporte.txt) con:
+	.Cantidad total de bloques
+	.Número de bloques con alertas
+	.Promedio general de frecuencia presión y oxígeno
+
+--------Evaluación
+Tarea 1: sin condiciones de carrera
+Tarea 2: con encadenamiento correcto y detección de alertas
+Tarea 3: con verficación íntegra y reporte preciso
+Extra: Código limpio, documentación  y README
+Se debe entregar:
+	.Código fuente(.py)y README.md con instrucciones de ejecución
+	.Archivo blockchain.json generado
+	.reporte.txt
+--------Consejos
+.Evitar bucles ocupados: usar sleep(1) donde corresponda
+.Manejar excepciones y cerrar limpiamente pipes/queues
+.Aplicar buenas prácticas de estilo PEP 8
+
+3 funciones distintas o una por (presion,frecuencia,oxigeno)
+3 funciones distintas
