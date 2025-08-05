@@ -9,4 +9,14 @@ Si cierras abruptamente un proceso padre, ¿qué debería pasar con sus hijos?
 
 
 
-    
+fork()--------PADRE--------->Genera el hijo, y la variable toma el id del hijo
+|
+|
+|Le pasa al hijo  el valor de la variable como un int = 0
+|--------------HIJO--------->Mismos programa que el padre(Reemplazable por exec())
+Este hijo no tiene un espacio de memoria completamente nuevo al momento de crearse, sino que se separan los espacios
+cuando alguno de los dos programas del mismo espacio hace un cambio en memoria
+
+
+Proceso zombi: Completó la ejecución del programa y su padre no limpió la salida de ejecución
+Proceso Huérfano: El padre completó la ejecución, cuando esto sucede el padre sucesor será el PID 1 (o proceso init)

@@ -1,0 +1,12 @@
+Tarea para casa:
+
+Que sucede cuando tengo muchos contenedores que se pueden comunicarse entre sí
+ya que yo puedo crear un sistema de contenedores, 1 container con backend, 1 para frontend, 1 para base de datos, otros para server web
+Esto genera un problema de orquestacion de contenedores, entonces se utiliza un organizador de contenedores
+que permite levantar una infraestructura de contenedores de manera sencilla y automatizada
+por lo general se utiliza docker compose
+cuando tengo mas instancias se puede utilizar kubernetes
+TAREA: entrar a https://hub.docker.com/r/gtstef/filebrowser y lo que hay que hacer es seguir las instrucciones
+cualquier duda anotarla y preguntar esto te permite tener una especie de wordpress de manera local
+Crear una imagen de python, que ejecuten adentro el ejercicio de multiprocessing (? revisar las clases
+Probar wordpress en docker con la imagen oficial

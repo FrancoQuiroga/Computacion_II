@@ -10,6 +10,8 @@ if pid > 0:  # Proceso padre(escritor)
     os.close(read_pipe)  # Cerramos el extremo que no usamos
     mensaje = "Hola desde el padre".encode()
     os.write(write_pipe, mensaje)
+    mensaje2 = 'HOLA DESDE EL PADRE 2'.encode()
+    os.write(write_pipe,mensaje2)
     os.close(write_pipe)
 else:  # Proceso hijo(lector)
     os.close(write_pipe)  # Cerramos el extremo que no usamos

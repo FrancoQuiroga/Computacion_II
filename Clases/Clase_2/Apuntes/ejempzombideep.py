@@ -1,7 +1,7 @@
 import os, time
 
 pid = os.fork()
-if pid > 0:
+if pid > 0: #Si el proceso es el padre, el programa termina
     print("[PADRE] Terminando rápidamente")
     os._exit(0)
 else:

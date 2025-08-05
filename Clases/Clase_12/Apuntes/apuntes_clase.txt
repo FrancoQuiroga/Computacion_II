@@ -1,0 +1,17 @@
+CLASE DE DOCKER
+Porque usamos docker?, Los contenedores habilitan el mundo de la virtualización
+lo que nos permite crear máquinas virtuales que corren sistemas operativos
+
+hay un segundo tipo de virtualizacion mediante un hypervisor que sobre eso corren múltiples sistemas operativos
+
+CONTENEDORES: no son una evolución de las máquinas virtuales, sino que intentan resolver el mismo problema, pero de una manera distinta
+
+Con los contenedores se busca aislar la ejecucion de aplicaciones, que nos permita encapsular el desarrollo de software
+Una de las ventajas es la rápida reconstrucción de la misma aplicación en distintos entornos o computadoras.
+Los contenedores traen lo mejor de los entornos virtuales y lo de las máquinas virtuales. Además de que se evita la duplicación de tareas y se crean interfaces estándarizadas.
+El image layer del overlay, va a ser la 'Estructura' del contenedor esto permite que estas capas se compartan entre distintos contenedores, y después tenemos la container layer que es el contexto de ejecución actual de un container específico
+
+Un contenedor se crea a partir de una sola imagen, puedo tener n contenedores de la misma imagen
+pero la imagen una vez que se construye es inalterable, la imagen es un instancia de un contenedor
+Los contenedores TIENEN que ser descartables, la imagen es lo que debería ser permanentes y manipulables
+

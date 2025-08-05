@@ -1,9 +1,10 @@
 import os
 
 child = os.fork()
+env = {'USER':'prueba','PATH':f'{os.get_exec_path()}'}
 
 if child==0:
-    os.execlp('deamonejercicio3','python3')
+    os.
 
 else:
     os.wait()

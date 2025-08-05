@@ -15,7 +15,7 @@ Para crear una carpeta para siguientes clases:
     mkdir -p Clases/Clase_*n*/Apuntes Clases/Clase_*n*/Ejercicios Clases/Clase_*n*/Resumen_pedagogico
 
 ¿Por qué es importante mantener una estructura de directorios organizada en un proyecto de software?
-    Porque permite expandir, corregir, y mejorar un proecto de programación de manera más sencilla
+    Porque permite expandir, corregir, y mejorar un proyecto de programación de manera más sencilla
 
 ¿Qué información debe incluir un archivo README.md?
     Debe incluir documentación del proyecto (Como utilizar el software, como instalarlo, etc.) y como se puede colaborar con el proyecto
