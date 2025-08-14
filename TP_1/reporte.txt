@@ -1,0 +1,1 @@
+{"media_frecuencia": 156, "media_presion": 133, "media_oxigeno": 80, "num_alertas": 3, "bloques_generados": 3}
