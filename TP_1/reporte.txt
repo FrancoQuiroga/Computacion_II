@@ -1,1 +1,1 @@
-{"media_frecuencia": 156, "media_presion": 133, "media_oxigeno": 80, "num_alertas": 3, "bloques_generados": 3}
+{"media_frecuencia": 134, "media_presion": 123, "media_oxigeno": 85, "num_alertas": 22, "bloques_generados": 31}
