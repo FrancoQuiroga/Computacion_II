@@ -5,9 +5,9 @@
 ======================  
 ### principal.py
 Este script genera datos biométricos simulados de:
-    - Frecuencia cardíaca (60-180 ppm)
-    - Presión cardíaca (Presion sistólica[110-180], Presion Diastólica [70-110])
-    - Oxigeno (Porcente % en sangre)
+    - Frecuencia cardíaca (60-180 ppm)  
+    - Presión cardíaca (Presion sistólica[110-180], Presion Diastólica [70-110])  
+    - Oxigeno (Porcente % en sangre)  
 Una vez creados estos datos se calcula para cada uno lo siguiente:
     - Media de los últimos 30 segundos
     - Desviación estándar de los últimos 30 segundos
