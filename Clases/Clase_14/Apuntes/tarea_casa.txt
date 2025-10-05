@@ -1,0 +1,2 @@
+Que el server datetime se ejecute al momento y no en el netcat anterior
+Que el server sea UDP

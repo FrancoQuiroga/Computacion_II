@@ -1,0 +1,6 @@
+127.0.0.1 hasta 127.* va a seer la interfaz de loopback de la máquina
+Interfaz de red loopback
+Podemos usar sockets de unix o de internet, 
+La configuración de los sockets tiene que ser igual en ambos extremos
+Incluir TODOS los ejercicios hasta el 8, exceptuando el 6
+

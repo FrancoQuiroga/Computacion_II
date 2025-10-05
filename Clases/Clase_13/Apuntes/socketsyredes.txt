@@ -1,0 +1,107 @@
+MODELO OSI:
+ El modelo OSI (Open Systems Interconnection) divide las funciones de comunicación de redes en 7 capas esto permite
+ otorgar un lenguaje universal para trabajar entre sistemas
+- Capa Física: La capa física debe lidiar con las limitaciones y características del mundo físico
+- Capa de Enlace: La capa de enlace de datos implementa mecanismos sofisticados para la detección y corrección de errores, utilizando técnicas como checksums 
+y códigos de redundancia cíclica (CRC) para verificar la integridad de los datos recibidos.
+
+- Red: Determinar la mejor ruta para que los paquetes de datos viajen desde su origen hasta su destino
+- Transporte: La capa de transporte se enfoca en proporcionar servicios de comunicación confiables 
+    entre procesos de aplicación que se ejecutan en diferentes hosts.
+
+- Sesión: La gestión de sesiones incluye funcionalidades como el inicio y terminación ordenada de sesiones,
+ la recuperación de sesiones después de fallos temporales, 
+ y la sincronización de actividades entre aplicaciones distribuidas.
+
+- Presentación: Esta capa actúa como un traductor universal.
+- Aplicación: Proporciona interfaces para que las aplicaciones de usuario accedan a los servicios de red.
+
+
+TCP( Transmission Control Protocol): Garantiza la entrega de datos de manera confiable y ordenada
+
+El modelo TCP/IP:
+El modelo TCP/IP usa una filosofía más simple de 4 capas que agrupa más funcionalidades de manera más pragmática.
+Cada capa del modelo TCP/IP tenía responsabilidades claras, pero las fronteras entre capas eran más fluidas que en el modelo OSI.
+
+Capas:
+    - Enlace: Capa que una la capa física con la de enlace,
+     lo que permite una flexibilidad muy alta al momento de desarrollar múltiples dispositivos distintos
+
+    - Internet: mueve paquetes de datos desde cualquier host en cualquier red 
+    hacia cualquier otro host en cualquier otra red.
+    El IP (Internet Protocol) implementa un modelo de servicio sencillo, best-effort delivery
+    los paquetes se envían sin requisitos de orden, entrega e integridad. Las direcciones IP permiten un enrutamiento
+    más sencillo al permitir una organización jerárquica de los dispositivos de una red local.
+
+    El ICMP (Internet Control Message Protocol) complementa a IP proporcionando mecanismo de reporte y diagnóstico de red.
+    
+    - Transporte: En esta capa hay dos modelos de transporte TCP (Transmission Control Protocol) 
+    y UDP (User Datagram Protocol), 
+    TCP: TCP maneja la retransmisión de paquetes perdidos,
+     reordena paquetes que llegan fuera de secuencia, detecta y descarta paquetes duplicados.
+    UDP: UDP es un protocolo sin conexión que no establece una conexión formal antes de enviar los datos,
+     lo que lo hace más ligero y veloz.
+
+    - Aplicación: combina las funciones de las capas de sesión, presentación y aplicación del modelo OSI. 
+    Esta consolidación refleja el reconocimiento de que estas funciones están frecuentemente íntimamente relacionadas 
+    y que separarlas puede introducir complejidades innecesaria.
+
+
+PUERTOS Y DIRECCIONAMIENTO:
+Un puerto es esencialmente un número de 16 bits que identifica 
+un punto específico de comunicación dentro de un host.
+Este número, que puede variar desde 0 hasta 65535, todos los puertos debajo del 1024 son privilegiados
+ o puertos bien conocidos.
+
+TELNET: telnet [direccion_ip/url http-https] [puerto-destino]
+
+NETCAT: nc [hostname][port]
+nc -l -p [port] ; esto escucha activamente en el puerto [port] 
+
+netcat como emisor, receptor de archivos:
+nc -l -p [port1] > archivo_recibido.txt ; esto permite escuchar activamente en [port1] y guardar lo escuchado en el .txt
+
+nc [destination_host] [port1] > archivo_enviado.txt ; envia el archivo .txt
+
+netcat como scanner de puertos:
+nc -z -v [hostname] [20-80] ; esto escanea los puertos [20-80] de [hostname] de manera verbosa
+
+netcat para UDP:
+nc -u [hostname] [port] ; la opción -u permite establecer conexiones udp con el destino.
+
+
+SOCKETS: 
+Conceptos fundamentales:
+Familia de protocolos:
+    La familia de protocolos que tipo de direccionamiento y protocolos de comunicación se usarán en un socket
+    - AF_INET (Address Family Internet): representa el dominio TCP/IP. Utilizan direccionamiento IPv4
+    - AF_INET (Igual al anterior): Utilizan direccionamiento IPv6
+    - AF_UNIX (Address Family UNIX): Comunicación local de un solo sistema. 
+    Los sockets Unix utilizan nombres de archivo del sistema de archivos como direcciones
+Tipos de Sockets: 
+    -SOCK_STREAM: Utiliza TCP, por lo que garantiza la confiabilidad, estabilidad y el orden de los datos
+    útiles donde la integridad de los datos sea de gran importancia
+
+    -SOCK_DGRAM: Utiliza UDP, donde cada datagrama (mensaje) se envía de manera independiente 
+    Esto evita el overhead de establecer conexiones previo a la comunicación. Perfecto para apps que no necesiten integridad en los datos
+
+    -SOCK_RAW: Permite el acceso directo a protocolos de bajo nivel de la red, a diferencia de otros sockets que manejan cabeceras de manera
+    automática, este socket requiere que el programador maneje la información de red. Los paquetes se tratan como datagramas
+
+Detalles de utilización:
+[setsockopt] es una syscall que le indica al OS que se va a cambiar la configuración de un socket
+
+[SOL_SOCKET] indica el nivel que aplica la configuración de socket (hay otros niveles como socket.IPPROTO_TCP para especificar protocolos)
+
+[SO_REUSEADDR] Le indica al OS que puede reusar el socket inmediatamente después de su desconexión. Por defecto los sockets tienen un
+TIME_WAIT(Esto evita la descoordinación de paquetes retrasados),
+que le prohibe al OS que haga otra conexion distinta al mismo socket durante x tiempo.
+
+[SO_REUSEPORT] Esto permite que varios procesos se bindeen al mismo socket, el OS se encarga de distribuir las conexiones entrantes entre ellos
+
+DETALLES IMPORTANTES DE LOS SOCKETS:
+    Los sockets trabajan con valores en bytes, asique es muy importante manejarse con este tipo de datos al momento de trabajar con sockets
+    Los sockets no fragmentan los mensajes recibidos, es decir, los sockets trabajan con buffers sin límites entre datos, lo que significa
+    que si queremos enviar múltiples datos en correcta sucesión, debemos tener cuidado y poner delimitadores de mensaje para que nuestros 
+    múltiples mensajes no se junten entre sí
+
