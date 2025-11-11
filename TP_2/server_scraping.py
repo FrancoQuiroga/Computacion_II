@@ -28,7 +28,9 @@ import time
 import scraper.async_http as async_scraper
 import scraper.html_parser as parser
 import common.protocol as protocol
-
+import common.serialization as serializer
+from common.protocol import send_msg_async, read_msg_async
+from common.serialization import serializer
 # --- 1. El Coordinador (Manejador de Rutas HTTP) ---
 
 async def handle_scrape(request):
@@ -70,7 +72,8 @@ async def handle_scrape(request):
         scraping_data = await loop.run_in_executor(
             None, # Usa el ThreadPoolExecutor por defecto
             parser.parse_html_data, 
-            html_content 
+            html_content,
+            url
         )
 
         # 3. Extraer las URLs de imágenes (necesarias para el Servidor B)
@@ -141,16 +144,14 @@ async def request_processing_from_server_b(server_b_config, url, image_urls):
     
     # 3. Serializar y enviar (usando el módulo de protocolo)
     #    protocol.send_data(writer, request_data)
-    message = json.dumps(request_data).encode('utf-8') # Serialización simple
-    writer.write(message)
+    msg_bytes = serializer.serialize(request_data)
+    await send_msg_async(writer, msg_bytes)
     await writer.drain() # Esperar a que el buffer se vacíe
-    
-    writer.write_eof() # Indicar fin de envío (opcional, depende del protocolo)
 
     # 4. Leer la respuesta
     #    response_data = await protocol.read_data(reader)
-    response_bytes = await reader.read(8192) # Leer hasta 8KB
-    response_data = json.loads(response_bytes.decode('utf-8'))
+    response_bytes = await read_msg_async(reader)
+    response_data = serializer.deserialize(response_bytes)
     
     # 5. Cerrar la conexión
     writer.close()

@@ -21,15 +21,24 @@ import multiprocessing
 import sys
 import argparse
 import os
-from processor import *
+from processor.image_processor import process_images
+from processor.performance import analyze_performance
+from processor.screenshot import generate_screenshot
+from common.protocol import read_msg_sync, send_msg_sync
+from common.serialization import serializer
+import signal
 # Importar funciones de worker (screenshot, performance, images)
 # Importar módulos de serialización/protocolo
+def init_worker():
+    """Ignora la señal de KeyboardInterrupt (Ctrl+C) en el worker."""
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
 
 class ProcessingWorkerPool:
     """Clase para gestionar el pool de procesos y someter tareas."""
     def __init__(self, num_processes):
         # Crear un Pool de procesos
-        self.pool = multiprocessing.Pool(processes=num_processes)
+        self.pool = multiprocessing.Pool(processes=num_processes,initializer=init_worker)
 
     def submit_processing_tasks(self, task_data):
         """
@@ -81,14 +90,12 @@ class ProcessingRequestHandler(socketserver.BaseRequestHandler):
         """Método que se ejecuta al recibir una conexión."""
         
         # 1. Recepción de datos del socket
-        # Implementar lectura del protocolo (ej: leer primero la longitud del mensaje)
-        # Ejemplo: Recibir todo el mensaje (simplicado)
-        data = self.request.recv(4096).strip() 
-        
+        data_bytes = read_msg_sync(self.request) # self.request es el socket
+        if not data_bytes:
+            return # Cliente desconectado
         try:
             # 2. Deserialización
-            task_data = json.loads(data.decode('utf-8'))
-            
+            task_data = serializer.deserialize(data_bytes)
             # 3. Delegar al pool de workers
             if self.worker_pool:
                 results = self.worker_pool.submit_processing_tasks(task_data)
@@ -99,11 +106,9 @@ class ProcessingRequestHandler(socketserver.BaseRequestHandler):
             # Manejo de errores de protocolo/serialización
             results = {"error": f"Error al procesar la solicitud: {e}", "status": "protocol_error"}
             
-        # 4. Serialización y envío de respuesta
-        response = json.dumps(results).encode('utf-8')
-        
-        # Implementar envío del protocolo (ej: enviar primero la longitud)
-        self.request.sendall(response)
+        response_bytes = serializer.serialize(results)
+        send_msg_sync(self.request, response_bytes)
+
 
 
 # server_processing.py

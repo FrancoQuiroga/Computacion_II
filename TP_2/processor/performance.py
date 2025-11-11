@@ -1,5 +1,5 @@
 from selenium import webdriver
-from __chrome_browser import setup_chrome_driver_for_performance as chrome_browser
+from .__chrome_browser import setup_chrome_driver_for_performance as chrome_browser
 import json
 import time # Para medir el tiempo total, si requests.elapsed no es suficiente
 
