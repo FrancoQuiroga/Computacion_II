@@ -1,0 +1,141 @@
+Vamos a ver como implementamos servidores web utilizando python.
+
+# HTTP:
+    - Que és?:
+        Hyper Text Tranfer Protocol (HTTP), 
+        es un protocolo de comunicación de la capa de aplicación diseñado para la transferencia de datos en la WWW.
+        
+        Opera sobre TCP (que ya conocemos de nuestro trabajo con sockets)
+        y sigue un modelo cliente-servidor basado en solicitud-respuesta.
+
+        HTTP es un protocolo sin estado (stateless),
+        lo que significa que cada solicitud se procesa independientemente, sin memoria de solicitudes anteriores.
+
+    - Estructura:
+        Request HTTP:
+
+        GET /index.html HTTP/1.1
+        Host: www.ejemplo.com
+        User-Agent: Mozilla/5.0
+        Accept: text/html,application/xhtml+xml
+        Connection: keep-alive
+
+        Response HTTP:
+
+        HTTP/1.1 200 OK
+        Content-Type: text/html
+        Content-Length: 1234
+        Server: Python/HTTPServer
+
+        <html>
+        <body>Contenido de la página</body>
+        </html>
+
+    - Métodos HTTP:
+        -Principales: 
+        -GET: Solicita la representación de un recurso específico. 
+        Es el método más común y debe ser idempotente (múltiples llamadas idénticas deben tener el mismo efecto).
+        
+        GET /usuarios/123 HTTP/1.1
+
+
+        -POST:  Envía datos al servidor para ser procesados. 
+        Generalmente usado para crear nuevos recursos o enviar datos de formularios. No es idempotente.
+
+        POST /usuarios HTTP/1.1
+        Content-Type: application/json
+
+        {"nombre": "Juan", "email": "juan@ejemplo.com"}
+
+        -PUT: Reemplaza completamente un recurso existente o lo crea si no existe. Es idempotente.
+
+        PUT /usuarios/123 HTTP/1.1
+        Content-Type: application/json
+
+        {"nombre": "Juan Pérez", "email": "juan.perez@ejemplo.com"}
+
+        -DELETE: Elimina un recurso específico. Es idempotente.
+
+        DELETE /usuarios/123 HTTP/1.1
+
+        -Adicionales: 
+        -HEAD: Similar a GET pero solicita solo los headers de respuesta, sin el cuerpo.
+        Útil para verificar metadatos sin descargar el contenido completo.
+
+        -PATCH: Realiza modificaciones parciales a un recurso, a diferencia de PUT que lo reemplaza completamente.
+
+        -OPTIONS: Solicita información sobre las opciones de comunicación disponibles para el recurso
+        (métodos permitidos, headers soportados).
+
+        -CONNECT: Establece un túnel hacia el servidor, principalmente usado con proxies para conexiones HTTPS.
+
+        -TRACE: Realiza una prueba de bucle de retorno del mensaje de solicitud, usado principalmente para diagnósticos
+
+    - Códigos de Estado HTTP:
+        2xx - Respuestas Exitosas
+            - 200 OK: La solicitud fue exitosa
+            - 201 Created: El recurso fue creado exitosamente
+            - 204 No Content: Solicitud exitosa sin contenido en la respuesta
+
+        3xx - Redirecciones
+            - 301 Moved Permanently: El recurso se movió permanentemente a otra URL
+            - 302 Found: Redirección temporal
+            - 304 Not Modified: El recurso no ha sido modificado desde la última solicitud
+
+        4xx - Errores del Cliente
+            - 400 Bad Request: Solicitud malformada
+            - 401 Unauthorized: Autenticación requerida
+            - 403 Forbidden: Acceso denegado
+            - 404 Not Found: Recurso no encontrado
+            - 405 Method Not Allowed: Método HTTP no permitido para este recurso
+
+        5xx - Errores del Servidor
+            - 500 Internal Server Error: Error interno del servidor
+            - 502 Bad Gateway: Error de gateway
+            - 503 Service Unavailable: Servicio no disponible temporalmente
+
+
+    - Headers HTTP:
+            - Content-Type: Tipo de contenido (text/html, application/json, etc.)
+            - Content-Length: Tamaño del cuerpo en bytes
+            - Host: Dominio del servidor (obligatorio en HTTP/1.1)
+            - User-Agent: Información sobre el cliente
+            - Accept: Tipos de contenido que el cliente puede procesar
+            - Authorization: Credenciales de autenticación
+            - Cookie: Datos de sesión del cliente
+
+PYTHON:
+http.server:
+
+socketserver.BaseServer
+    └── socketserver.TCPServer
+        └── http.server.HTTPServer
+            └── http.server.ThreadingHTTPServer
+
+socketserver.BaseRequestHandler
+    └── http.server.BaseHTTPRequestHandler
+        └── http.server.SimpleHTTPRequestHandler
+        └── http.server.CGIHTTPRequestHandler
+
+# PYTHON CODE #
+import http.server as mod_server
+
+server = mod_server.HTTPServer(("localhost",8000),Mihandler)
+server_thrd = mod_server.ThreadingHTTPServer(("localhost",8000),Mihandler)
+
+
+
+# GET request
+curl http://localhost:8080/
+
+# POST con datos
+curl -X POST -d "datos=test" http://localhost:8080/api
+
+# Ver headers de respuesta
+curl -i http://localhost:8080/
+
+# POST con JSON
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -d '{"nombre": "test"}' \
+     http://localhost:8080/api

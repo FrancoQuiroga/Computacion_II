@@ -5,7 +5,7 @@ MODELO OSI:
 - Capa de Enlace: La capa de enlace de datos implementa mecanismos sofisticados para la detección y corrección de errores, utilizando técnicas como checksums 
 y códigos de redundancia cíclica (CRC) para verificar la integridad de los datos recibidos.
 
-- Red: Determinar la mejor ruta para que los paquetes de datos viajen desde su origen hasta su destino
+- Capa de Red: Determinar la mejor ruta para que los paquetes de datos viajen desde su origen hasta su destino
 - Transporte: La capa de transporte se enfoca en proporcionar servicios de comunicación confiables 
     entre procesos de aplicación que se ejecutan en diferentes hosts.
 
@@ -35,7 +35,7 @@ Capas:
 
     El ICMP (Internet Control Message Protocol) complementa a IP proporcionando mecanismo de reporte y diagnóstico de red.
     
-    - Transporte: En esta capa hay dos modelos de transporte TCP (Transmission Control Protocol) 
+    - Transporte: En esta capa hay dos modelos de transporte: TCP (Transmission Control Protocol) 
     y UDP (User Datagram Protocol), 
     TCP: TCP maneja la retransmisión de paquetes perdidos,
      reordena paquetes que llegan fuera de secuencia, detecta y descarta paquetes duplicados.
@@ -89,15 +89,35 @@ Tipos de Sockets:
     automática, este socket requiere que el programador maneje la información de red. Los paquetes se tratan como datagramas
 
 Detalles de utilización:
+
+
+# Crear un socket TCP para comunicación a través de Internet
+sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Crear un socket UDP para comunicación a través de Internet
+sock_udp = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+
+# Crear un socket Unix para comunicación local
+sock_unix = socket.socket(socket.AF_UNIX, socket.SOCK_RAW)
+
+# sock_tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 [setsockopt] es una syscall que le indica al OS que se va a cambiar la configuración de un socket
-
 [SOL_SOCKET] indica el nivel que aplica la configuración de socket (hay otros niveles como socket.IPPROTO_TCP para especificar protocolos)
-
 [SO_REUSEADDR] Le indica al OS que puede reusar el socket inmediatamente después de su desconexión. Por defecto los sockets tienen un
 TIME_WAIT(Esto evita la descoordinación de paquetes retrasados),
 que le prohibe al OS que haga otra conexion distinta al mismo socket durante x tiempo.
 
 [SO_REUSEPORT] Esto permite que varios procesos se bindeen al mismo socket, el OS se encarga de distribuir las conexiones entrantes entre ellos
+
+[SHUT_RD] Cierra el canal de lectura de un socket
+[SHUT_WR] Cierra el canal de escritura de un socket
+[SHUT_RDWR] Cierra ambos canales
+shutdown() se puede usar en el extremo de server y cliente, solo cuando la parte que cierra no va usar más
+el canal que se cierra
+
+send() envía todos los datos que puedan entrar al buffer del socket
+senadall() envía el mensaje completo, además de asegurarse de dar error si no se pudo enviar el mensaje completo
 
 DETALLES IMPORTANTES DE LOS SOCKETS:
     Los sockets trabajan con valores en bytes, asique es muy importante manejarse con este tipo de datos al momento de trabajar con sockets

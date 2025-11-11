@@ -1,0 +1,17 @@
+Permitir que el código de socketserver permita dualstack (Ipv4 e Ipv6)
+
+
+Programación Asíncrona:
+
+    Yield: es un generador que permite conservar el estado de la funcion,
+    Guarda los datos mediante pasos
+    Que pasa si hago yield sin devolver ninguna variable? Devuelve un Nonetype
+
+    Que pasa si hago un yield en distinto orden? los yield no tienen orden, puedo ponerlos dentro de condicionales
+
+    generador.send() : envío un mensaje al yield, y luego hace un next()
+
+    agarrar un archivo grande y hacer el ejemplo 1
+    trabajar comunicación bidireccional con send()
+
+

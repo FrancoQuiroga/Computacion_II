@@ -1,0 +1,34 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 20px;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+#mensaje {
+    font-size: 1.2em;
+    margin-top: 20px;
+    /* Estilo que será cambiado por JS */
+    border: 1px solid gray;
+    padding: 10px;
+}
+
+#myImage {
+    display: block;
+    margin: 20px auto;
+    border: 3px solid #007bff;
+    border-radius: 8px;
+}
+
+.js-activo {
+    /* Clase que se añade con JS */
+    background-color: #fffacd;
+    font-weight: bold;
+}
