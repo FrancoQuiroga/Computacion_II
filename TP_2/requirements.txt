@@ -1,0 +1,7 @@
+beautifulsoup4 
+lxml
+Pillow
+selenium
+aiofiles
+aiohttp
+requests
