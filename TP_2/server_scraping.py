@@ -22,7 +22,7 @@ from aiohttp import web
 import json
 from datetime import datetime
 import time
-
+import uuid # Para generar task_ids
 # Importar los módulos de scraping y comunicación
 # (Asumimos que están en scraper/ y common/)
 import scraper.async_http as async_scraper
@@ -31,7 +31,62 @@ import common.protocol as protocol
 import common.serialization as serializer
 from common.protocol import send_msg_async, read_msg_async
 from common.serialization import serializer
-# --- 1. El Coordinador (Manejador de Rutas HTTP) ---
+async def run_scrape_task(app, task_id, url):
+    """
+    Esta es la tarea que se ejecuta en segundo plano.
+    Contiene la lógica original de scraping y procesamiento.
+    """
+    task_storage = app['task_storage']
+    
+    try:
+        # 1. Actualizar estado a "scraping"
+        task_storage[task_id]["status"] = "scraping"
+        
+        http_session = app['http_session']
+        server_b_config = app['server_b_config']
+
+        # --- Tarea A: Scraping y Parsing ---
+        html_content = await asyncio.wait_for(
+            async_scraper.fetch_html(http_session, url),
+            timeout=30.0
+        )
+        
+        loop = asyncio.get_event_loop()
+        scraping_data = await loop.run_in_executor(
+            None, 
+            parser.parse_html_data, 
+            html_content,
+            url
+        )
+        image_urls = scraping_data.get("image_urls", [])
+
+        # 2. Actualizar estado a "processing"
+        task_storage[task_id]["status"] = "processing"
+
+        # --- Tarea B: Comunicación con Servidor B ---
+        processing_data = await request_processing_from_server_b(
+            server_b_config,
+            url,
+            image_urls
+        )
+        
+        # 3. Consolidar y guardar el resultado final
+        final_result = {
+            "url": url,
+            "timestamp": datetime.now().isoformat(),
+            "scraping_data": scraping_data,
+            "processing_data": processing_data,
+            "status": "success" # Status del *resultado*, no de la tarea
+        }
+        
+        # 4. Actualizar estado a "completed"
+        task_storage[task_id]["status"] = "completed"
+        task_storage[task_id]["result"] = final_result
+
+    except Exception as e:
+        # 5. Manejar fallos
+        task_storage[task_id]["status"] = "failed"
+        task_storage[task_id]["result"] = {"status": "error", "message": str(e)}
 
 async def handle_scrape(request):
     """
@@ -123,7 +178,43 @@ async def handle_scrape(request):
             status=500
         )
 
+async def handle_submit_scrape(request):
+    """
+    (NUEVO) Acepta la tarea y devuelve un task_id.
+    Reemplaza a 'handle_scrape'. Debería ser un POST, pero
+    lo dejamos en GET por simplicidad del client.py.
+    """
+    url = request.query.get('url')
+    if not url:
+        return web.json_response({"error": "URL parameter is required"}, status=400)
 
+    # 1. Generar ID y crear tarea
+    task_id = str(uuid.uuid4())
+    app = request.app
+    app['task_storage'][task_id] = {"status": "pending", "result": None}
+
+    # 2. Lanzar la tarea en segundo plano
+    asyncio.create_task(run_scrape_task(app, task_id, url))
+
+    # 3. Devolver el task_id inmediatamente
+    response_data = {
+        "message": "Task accepted",
+        "task_id": task_id,
+        "status_url": f"/status/{task_id}",
+        "result_url": f"/result/{task_id}"
+    }
+    return web.json_response(response_data, status=202) # 202 Accepted
+
+async def handle_get_status(request):
+    """(NUEVO) Devuelve el estado de una tarea."""
+    task_id = request.match_info.get('task_id')
+    task_storage = request.app['task_storage']
+    
+    task = task_storage.get(task_id)
+    if not task:
+        return web.json_response({"error": "Task not found"}, status=404)
+        
+    return web.json_response({"task_id": task_id, "status": task["status"]})
 # --- 2. Cliente Asíncrono para el Servidor B ---
 
 async def request_processing_from_server_b(server_b_config, url, image_urls):
@@ -159,7 +250,25 @@ async def request_processing_from_server_b(server_b_config, url, image_urls):
     
     return response_data
 
-
+async def handle_get_result(request):
+    """(NUEVO) Devuelve el resultado de una tarea completada."""
+    task_id = request.match_info.get('task_id')
+    task_storage = request.app['task_storage']
+    
+    task = task_storage.get(task_id)
+    if not task:
+        return web.json_response({"error": "Task not found"}, status=404)
+        
+    if task["status"] == "completed":
+        return web.json_response(task["result"])
+    elif task["status"] == "failed":
+        return web.json_response(task["result"], status=500)
+    else:
+        # Aún no está lista
+        return web.json_response(
+            {"status": task["status"], "message": "Task is not yet complete"}, 
+            status=202 # 202 Accepted (pero no listo)
+        )
 # --- 3. Módulos de Scraping (Archivos Separados) ---
 
 # scraper/async_http.py
@@ -201,22 +310,23 @@ async def init_app(server_b_config):
     """Inicializa la aplicación aiohttp."""
     app = web.Application()
     
-    # 1. Crear una única sesión de cliente HTTP para reutilizar conexiones
+    # 1. Almacén de Tareas
+    app['task_storage'] = {}
+    
+    # 2. Sesión HTTP
     app['http_session'] = aiohttp.ClientSession()
     
-    # 2. Almacenar configuración del Servidor B
+    # 3. Configuración del Servidor B
     app['server_b_config'] = server_b_config
 
-    # 3. Definir rutas
-    app.router.add_get('/scrape', handle_scrape)
+    # 4. Definir NUEVAS rutas
+    app.router.add_get('/scrape', handle_submit_scrape) # Antes 'handle_scrape'
+    app.router.add_get('/status/{task_id}', handle_get_status)
+    app.router.add_get('/result/{task_id}', handle_get_result)
     
-    # Manejo de cierre limpio
-    async def on_cleanup(app):
-        await app['http_session'].close()
-    app.on_cleanup.append(on_cleanup)
+    # ... (Manejo de cierre limpio) ...
     
     return app
-
 def main():
     args = parse_args()
     
