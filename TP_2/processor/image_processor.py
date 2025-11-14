@@ -11,7 +11,9 @@ THUMBNAIL_SIZE = (100, 100) # (Ancho, Alto) en píxeles
 
 # Límite de imágenes a procesar para no sobrecargar
 MAX_IMAGES_TO_PROCESS = 5 
-
+REQUEST_HEADERS = {
+    'User-Agent': '... Chrome/91.0.4472.124 Safari/537.36'
+}
 def process_images(base_url, image_urls):
     """
     Descarga imágenes principales, genera thumbnails optimizados y 
@@ -38,7 +40,7 @@ def process_images(base_url, image_urls):
 
             # 3. Descargar la imagen (síncrono)
             # Usamos un timeout corto para imágenes
-            response = requests.get(full_img_url, timeout=10) 
+            response = requests.get(full_img_url, timeout=30,headers=REQUEST_HEADERS) 
             response.raise_for_status() # Error si es 4xx o 5xx
 
             # 4. Procesamiento con Pillow
@@ -64,8 +66,9 @@ def process_images(base_url, image_urls):
                 
                 processed_count += 1
 
-        except requests.RequestException:
+        except requests.RequestException as e:
             # Ignorar si falla la descarga de una imagen (timeout, 404)
+            print(f"[DEBUG] Falla de Request en process_images: {e}")
             pass
         except Exception as e:
             # Ignorar si falla el procesamiento de una imagen (ej: formato corrupto)
@@ -105,4 +108,4 @@ if __name__ == "__main__":
         "https://httpbin.org/image/webp"
     ]
     resultados = process_images(base_url, image_urls)
-    print(resultados)
+    print(len(resultados))

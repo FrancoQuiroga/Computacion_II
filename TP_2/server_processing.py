@@ -55,7 +55,7 @@ class ProcessingWorkerPool:
         # Aquí usamos apply_async para simular:
         
         # 1. Captura de Screenshot
-        screenshot_result = self.pool.apply_async(generate_screenshot, args=(url, {}))
+        screenshot_result = self.pool.apply_async(generate_screenshot, args=(url,))
         
         # 2. Análisis de Rendimiento
         performance_result = self.pool.apply_async(analyze_performance, args=(url,))
@@ -77,6 +77,7 @@ class ProcessingWorkerPool:
             }
         except Exception as e:
             # Manejo de errores (timeouts, excepciones en el worker, etc.)
+            print(f"[DEBUG] ¡ERROR GRAVE EN EL POOL!: {e}")
             return {"error": str(e), "status": "processing_failed"}
 
 
@@ -143,7 +144,15 @@ def main():
 
     # Usaremos ThreadingTCPServer ya que delegamos el paralelismo real a Pool
     # para el trabajo CPU-bound, y los hilos son suficientes para recibir datos del socket.
-    server = socketserver.ThreadingTCPServer((args.ip, args.port), ProcessingRequestHandler)
+    class MyTcpServer(socketserver.TCPServer):
+        allow_reuse_address = True
+
+        def __init__(self, address, request_handler_class):
+            self.address = address
+            self.request_handler_class = request_handler_class
+            super().__init__(self.address, self.request_handler_class) 
+    server = MyTcpServer((args.ip, args.port), ProcessingRequestHandler)
+    
     
     print(f"Servidor de Procesamiento escuchando en {args.ip}:{args.port}")
     

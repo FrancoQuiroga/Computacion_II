@@ -21,7 +21,7 @@ def parse_html_data(html_content, base_url):
     # 2. Todos los enlaces (links)
     links = []
     for a_tag in soup.find_all('a', href=True):
-        href = a_tag['href']
+        href = a_tag['href'].strip()
         # Convertir enlaces relativos (ej: "/about") en absolutos
         abs_link = urljoin(base_url, href)
         links.append(abs_link)
