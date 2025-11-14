@@ -31,7 +31,7 @@ Sigue estos pasos para configurar el entorno de desarrollo.
 
 1.  **Clonar el repositorio (si es necesario):**
     ```bash
-    git clone [URL_DEL_REPOSITORIO]
+    git clone [https://github.com/FrancoQuiroga/Computacion_II.git]
     cd TP_2
     ```
 
@@ -69,4 +69,57 @@ Necesitarás **3 terminales** separadas (todas con el entorno `env` activado).
 **Terminal 1: Iniciar Servidor B (Procesamiento)**
 ```bash
 (env) [TP_2]-(main)$ python3 server_processing.py -i 127.0.0.1 -p 8001
-# Salida esperada: Servidor de Procesamiento escuchando en 127.0.0.1:8001
+# Salida esperada: Servidor de Procesamiento escuchando en 127.0.0.1:8001 
+### Terminal 2: Iniciar Servidor A (Scraping)
+```bash
+(env) [TP_2]-(main)$ python3 server_scraping.py -i 127.0.0.1 -p 8000 --b-host 127.0.0.1 --b-port 8001
+# Salida esperada: Servidor sirviendo en [http://127.0.0.1:8000](http://127.0.0.1:8000)
+```
+
+### Terminal 3: Ejecutar el Cliente
+```bash
+(env) [TP_2]-(main)$ python3 client.py "[https://google.com](https://google.com)" --port 8000 --save
+# Salida esperada: --- Resumen del Scraping --- ...
+```
+
+### Modo 2: Script Automatizado (Recomendado para Probar)
+
+El script `run_project.sh` automatiza los 3 pasos anteriores.
+
+*   Dar permisos de ejecución (solo la primera vez):
+    ```bash
+    (env) [TP_2]-(main)$ chmod +x run_project.sh
+    ```
+
+*   Ejecutar el script: Pasa la URL que deseas probar como argumento (entre comillas).
+    ```bash
+    (env) [TP_2]-(main)$ ./run_project.sh "[https://es.wikipedia.org/wiki/Python](https://es.wikipedia.org/wiki/Python)"
+    ```
+
+    El script iniciará ambos servidores, ejecutará el cliente (con la opción `--save`) y cerrará los servidores automáticamente.
+
+## Estructura del Proyecto
+
+```
+TP2/
+├── server_scraping.py          # Servidor asyncio (Parte A)
+├── server_processing.py        # Servidor multiprocessing (Parte B)
+├── client.py                   # Cliente de prueba
+├── run_project.sh              # Script de ejecución
+├── scraper/
+│   ├── async_http.py           # Cliente HTTP asíncrono
+│   ├── html_parser.py          # Parser principal (BeautifulSoup)
+│   └── metadata_extractor.py   # Extractor de metadatos
+├── processor/
+│   ├── screenshot.py           # Worker: Selenium Screenshot
+│   ├── performance.py          # Worker: Selenium CDP Performance
+│   └── image_processor.py      # Worker: Pillow Thumbnails
+├── common/
+│   ├── protocol.py             # Protocolo de sockets (prefijo de longitud)
+│   └── serialization.py        # Serializador JSON
+├── tests/
+│   ├── test_scraper.py         # Pruebas unitarias (Servidor A)
+│   └── test_processor.py       # Pruebas unitarias (Servidor B)
+├── requirements.txt            # Dependencias
+└── README.md                   # Este archivo
+```
